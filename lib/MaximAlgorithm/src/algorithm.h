@@ -59,14 +59,14 @@
 * ownership rights.
 *******************************************************************************
 */
-#ifndef SPO2_ALGORITHM_H_
-#define SPO2_ALGORITHM_H_
+#ifndef ALGORITHM_H_
+#define ALGORITHM_H_
 
 #include <Arduino.h>
 
-#define FS 25    //sampling frequency
-#define BUFFER_SIZE (FS * 4) 
-#define MA4_SIZE 4 // DONOT CHANGE
+#define FS 100
+#define BUFFER_SIZE 100
+#define MA4_SIZE 4
 #define min(x,y) ((x) < (y) ? (x) : (y))
 
 //uch_spo2_table is approximated as  -45.060*ratioAverage* ratioAverage + 30.354 *ratioAverage + 94.845 ;
