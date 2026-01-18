@@ -1,245 +1,71 @@
-# CareLink Mesh System — Communication Protocol
+# 📡 CareLink Mesh System — Communication Protocol v0.2
+> **Binary-Optimized Protocol for Resilient Clinical Telemetry**
 
-This document defines the communication protocol used by Patient Nodes, Nurse Nodes, and the Gateway within the CareLink Mesh System.  
-It specifies message formats, required fields, acknowledgment logic, retry behavior, and fallback rules across Wi‑Fi, ESP‑NOW, and LoRa.
-
----
-
-## 1. Overview
-
-The protocol is designed to be:
-
-- **Lightweight** — suitable for ESP8266/ESP32 devices  
-- **Deterministic** — predictable behavior in clinical workflows  
-- **Resilient** — supports fallback channels and retries  
-- **Extensible** — future‑proof for additional message types or cloud integration  
-
-All messages follow a structured JSON‑like format (serialized as compact strings for ESP‑NOW and LoRa).
+This document defines the communication protocol for the CareLink Mesh System. Version 0.2 transitions from generic JSON strings to Packed C-Structures to minimize latency, reduce power consumption, and ensure reliability on constrained ESP8266/ESP32 hardware.
 
 ---
 
-## 2. Message Types
+## 1. 📦 Message Structure (Binary Payload)
+To maximize performance, messages are transmitted as raw byte arrays mapped directly to a C-structure. This avoids the overhead of JSON parsing.
 
-The system defines the following core message types:
-
-| Type | Description |
-|------|-------------|
-| `ALERT` | Sent by Patient Nodes when a threshold is exceeded or a manual alert is triggered |
-| `ACK` | Sent by Nurse Nodes or Gateway to confirm receipt of an alert |
-| `HELP` | Emergency assistance request from a Nurse Node |
-| `SYNC` | Configuration or status synchronization from Gateway |
-| `STATUS` | Periodic heartbeat from nodes |
-| `ERROR` | Error or failure notification |
-
----
-
-## 3. Message Format
-
-All messages share a common structure:
-
-{
-“type”: “<MESSAGE_TYPE>”,
-“node_id”: “<unique_node_id>”,
-“timestamp”: <unix_epoch_ms>,
-“payload”: { … }
-}
-
-
-### 3.1 Required Fields
-
-- **type** — one of the defined message types  
-- **node_id** — unique identifier for the sending node  
-- **timestamp** — milliseconds since epoch  
-- **payload** — message‑specific data  
+[STRUCT DEFINITION]
+typedef struct __attribute__((packed)) {
+    char bed_id[4];         // Unit identifier (e.g., "B12")
+    uint32_t timestamp;     // Relative uptime or Epoch ms
+    uint8_t alert_type;     // 0: NORM, 1: SOS, 2: INFECTION, 3: SHOCK
+    uint16_t bpm;           // Heart Rate (BPM)
+    uint8_t spo2;           // Oxygen Saturation (%)
+    float temperature;      // Body Temperature (°C)
+    float shock_index;      // Calculated sSI (BPM/SpO2)
+} carelink_msg_t;
 
 ---
 
-## 4. Message Definitions
+## 2. 🚦 Alert Classification & Priority
+The protocol implements edge-calculated priority levels. Each alert_type triggers specific behaviors on both Patient and Nurse nodes:
 
-### 4.1 ALERT
-
-Sent by Patient Nodes.
-
-{
-“type”: “ALERT”,
-“node_id”: “patient_12”,
-“timestamp”: 1737220000000,
-“payload”: {
-“bed_id”: “B12”,
-“alert_code”: “LOW_SPO2”,
-“value”: 86,
-“priority”: “HIGH”
-}
-}
-
-
-### 4.2 ACK
-
-Sent by Nurse Nodes or Gateway.
-
-{
-“type”: “ACK”,
-“node_id”: “nurse_03”,
-“timestamp”: 1737220012000,
-“payload”: {
-“alert_id”: “patient_12_1737220000000”,
-“operator_id”: “NURSE_03”,
-“status”: “ACKNOWLEDGED”
-}
-}
-
-
-### 4.3 HELP
-
-Emergency request from a Nurse Node.
-
-{
-“type”: “HELP”,
-“node_id”: “nurse_03”,
-“timestamp”: 1737220025000,
-“payload”: {
-“location”: “Room 4”,
-“reason”: “ASSISTANCE_REQUEST”
-}
-}
-
-
-### 4.4 SYNC
-
-Sent by Gateway to update configuration.
-
-{
-“type”: “SYNC”,
-“node_id”: “gateway_01”,
-“timestamp”: 1737220030000,
-“payload”: {
-“ward_id”: “WARD_A”,
-“config_version”: 4,
-“nodes”: {
-“patient_12”: { “bed_id”: “B12” },
-“nurse_03”: { “assigned_sector”: “A1” }
-}
-}
-}
-
-
-### 4.5 STATUS
-
-Periodic heartbeat.
-
-{
-“type”: “STATUS”,
-“node_id”: “patient_12”,
-“timestamp”: 1737220040000,
-“payload”: {
-“battery”: 92,
-“wifi”: “OK”,
-“esp_now”: “READY”,
-“lora”: “DISABLED”
-}
-}
-
+| Alert Code | Severity | Description | Trigger Condition |
+|:--- | :--- | :--- | :--- |
+| 0x00 (NORM) | Low | Routine Telemetry | Vitals within safe thresholds. |
+| 0x01 (SOS) | Critical | Manual Alert | Emergency button pressed by patient. |
+| 0x02 (INFECT) | High | Infection Risk | Temp > 38.0°C + Tachycardia (BPM > 100). |
+| 0x03 (SHOCK) | Critical | Hemodynamic Alert | sSI > 1.0 (BPM/SpO2 ratio). |
 
 ---
 
-## 5. Acknowledgment Logic
+## 3. 📶 Communication Fallback Strategy
+CareLink enforces a tiered transmission logic to guarantee delivery during infrastructure failures:
 
-### 5.1 ALERT → ACK Flow
-
-1. Patient Node sends `ALERT`
-2. Nurse Node or Gateway receives it
-3. Receiver sends `ACK`
-4. Patient Node marks alert as delivered
-
-### 5.2 Timeout & Retry
-
-- If no ACK is received within **500 ms**, retry  
-- Maximum retries: **3**  
-- After 3 failures → fallback to next communication layer  
+1. Wi-Fi (Primary): Uses MQTT/TCP for long-term data logging at the Gateway.
+2. ESP-NOW (Secondary): Fast, peer-to-peer failover. Reaches Nurse Nodes directly if the local Wi-Fi router is down.
+3. LoRa Mesh (Future): Emergency long-range layer for total building power failure (Planned v0.5).
 
 ---
 
-## 6. Fallback Strategy
+## 4. 🔄 Acknowledgment (ACK) & Retries
+The protocol uses a targeted feedback loop to ensure the Patient Node knows the alert was received:
 
-### 6.1 Priority Order
-
-1. **Wi‑Fi**  
-2. **ESP‑NOW**  
-3. **LoRa Mesh** (future)
-
-### 6.2 Conditions for Fallback
-
-| Condition | Action |
-|----------|--------|
-| Wi‑Fi unreachable | Switch to ESP‑NOW |
-| ESP‑NOW unreachable | Switch to LoRa |
-| Gateway unreachable | Attempt multi‑hop (ESP‑NOW or LoRa) |
-| No path available | Store message locally and retry periodically |
+1. Broadcast: Patient Node sends carelink_msg_t.
+2. Validation: Nurse Node checks the bed_id and clinical priority.
+3. ACK: Nurse Node replies with a 1-byte confirmation (0x06) to the sender's MAC address.
+4. Timeout: If no ACK arrives within 500ms, the Patient Node retries up to 3 times.
+5. Local Escalation: If all retries fail, the Patient Node enters "Isolated Alert Mode" (OLED Flashing).
 
 ---
 
-## 7. Multi‑Hop Forwarding (Planned)
+## 5. 🚨 Visual Urgency Protocol
+Hardware behavior is dictated by the protocol state:
 
-Nodes may forward messages when the Gateway is out of range.
-
-### 7.1 Routing Rules (planned)
-
-- Each node maintains a list of nearby nodes  
-- Messages include a `hop_count` field  
-- Maximum hops: **3**  
-- Nodes drop messages if:  
-  - hop_count exceeds max  
-  - message ID already seen (loop prevention)
+* Standby: OLED displays real-time vitals and bed_id.
+* Critical/Unacknowledged: The system calls display.invertDisplay(true) at 300ms intervals, creating a high-contrast strobe effect to signal urgency.
 
 ---
 
-## 8. Message Security (Future Work)
-
-Planned enhancements:
-
-- Lightweight encryption (AES‑128)  
-- Message signing (HMAC)  
-- Replay protection (nonce + timestamp)  
-- Role‑based permissions for SYNC messages  
+## 6. 🛠️ Implementation Notes (HW-364A)
+* Bus Timing: Sensor polling (MAX30102/MAX30205) is interleaved with radio bursts to prevent I2C bus jitter.
+* Memory Footprint: The binary structure uses only 21 bytes per packet, making it ideal for the limited RAM of the ESP8266.
 
 ---
 
-## 9. Error Handling
-
-Nodes may send `ERROR` messages when:
-
-- sensor failure  
-- communication failure  
-- invalid configuration  
-- repeated ACK timeout  
-
-Example:
-
-{
-“type”: “ERROR”,
-“node_id”: “patient_12”,
-“timestamp”: 1737220055000,
-“payload”: {
-“code”: “SENSOR_FAILURE”,
-“details”: “SPO2 sensor not responding”
-}
-}
-
-
----
-
-## 10. Compatibility & Extensibility
-
-The protocol is designed to:
-
-- support new message types  
-- evolve with cloud integration  
-- remain lightweight for constrained devices  
-- operate across heterogeneous communication layers  
-
----
-
-## Disclaimer
-
-This protocol is part of a technical and educational prototype.  
-It is not intended for certified medical use.
+## ⚠️ Disclaimer
+CareLink Mesh System is a technical and educational prototype. It is not a certified medical device and should not be used for life-critical monitoring.
