@@ -1,0 +1,22 @@
+{
+  "name": "MaximAlgorithm",
+  "version": "1.0.0",
+  "description": "Heart Rate and SpO2 calculation algorithm for MAX30102 based on Maxim Integrated MAXREFDES117.",
+  "keywords": "medical, pulse oximetry, spo2, heart rate, maxim",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tuo-username/CareLink-Mesh-System"
+  },
+  "authors": [
+    {
+      "name": "Maxim Integrated",
+      "maintainer": true
+    },
+    {
+      "name": "CareLink Team",
+      "maintainer": false
+    }
+  ],
+  "frameworks": "arduino",
+  "platforms": "espressif8266"
+}
