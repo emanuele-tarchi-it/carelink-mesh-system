@@ -15,77 +15,65 @@ Patient • Nurse • Gateway • Cloud‑Ready System
 
 </div>
 
+---
 
-# 🏥 CareLink Mesh System
-## *Version 0.2 - Clinical Intelligence & Edge Monitoring*
+# 🏥 CareLink Mesh System  
+### *Born in the ward. Built for the ward. A tribute to those who care.*
 
 ![Version](https://img.shields.io/badge/Version-0.2--EN-blue)
 ![Platform](https://img.shields.io/badge/Platform-ESP8266--HW364A-orange)
 ![Framework](https://img.shields.io/badge/Framework-Arduino/PlatformIO-blue)
 ![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)
 
-CareLink Mesh System is a resilient IoT network for hospital wards, enabling reliable bedside monitoring, nurse alerts, and emergency requests. It operates across Wi-Fi and ESP-NOW to ensure continuous communication even during network outages.
+CareLink was not imagined in a lab.  
+It was born in real hospital wards — during long shifts, beside patients who needed constant attention, and among professionals who carry the weight of care every single day.
+
+This project does **not** aim to replace anyone.  
+It exists to **support everyone**.
+
+CareLink is a tribute to the entire healthcare team:
+
+- nurses  
+- nursing assistants and support staff  
+- physicians and residents  
+- physiotherapists  
+- rehabilitation and respiratory therapists  
+- medical technicians  
+- all professionals who make patient care possible  
+
+Every one of them faces pressure, fatigue, responsibility, and moments where time is never enough.  
+CareLink wants to give back a little of that time.
+
+It aims to reduce stress, prevent oversights, and anticipate problems before they grow.  
+It is designed to be a **silent ally**, a background presence that helps clinical work remain human, focused, and safe.
+
+This project is my way of honoring the people I worked with for years —  
+and also the path I am building for my own future, a bridge between healthcare and engineering.
 
 ---
 
-## 🚀 Key Features (v0.2)
+# 🌐 What CareLink Is (beyond the technology)
 
-- **Real-Time Vitals Monitoring**: Integrated support for SpO2, Heart Rate, and Body Temperature.
-- **Clinical Decision Support**: Edge-computing algorithms for **Simplified Shock Index (sSI)** and **Infection Alert**.
-- **Resilient Connectivity**: Primary Wi-Fi link with automatic **ESP-NOW binary fallback**.
-- **Visual Urgency System**: High-contrast OLED strobe effects for critical unacknowledged alarms.
+CareLink is a bedside system that:
 
----
+- gathers vital signs directly from the patient’s bed  
+- interprets them with simple but meaningful clinical logic  
+- alerts the nurse node when something changes  
+- keeps working even when the network fails  
+- prepares data for cloud analysis and ward‑wide visibility  
 
-## 🔧 Hardware Configuration (Patient Node)
-
-The system is optimized for the **HW-364A (ESP8266 with integrated OLED)**.
-
-### Custom I2C Pinout
-Due to non-standard manufacturer mapping, the sensors must be initialized as follows:
-- **SDA**: GPIO 14 (D5)
-- **SCL**: GPIO 12 (D6)
-
-### Sensor Matrix
-| Sensor | Model | Function | I2C Address |
-| :--- | :--- | :--- | :--- |
-| **OLED** | SSD1306 | Local UI & Visual Alarms | `0x3C` |
-| **Pulse Ox** | MAX30102 | Heart Rate & SpO2 | `0x57` |
-| **Temp** | MAX30205 | Clinical Body Temperature | `0x48` |
-
-
+It does not decide.  
+It does not replace.  
+**It supports.**
 
 ---
 
-## 🧠 Clinical Logic
+# 💬 Why I Built CareLink
 
-Firmware v0.2 processes data locally to reduce alarm fatigue and prioritize critical cases:
+Because I have seen the pressure, the fatigue, and the responsibility that every healthcare professional carries.  
+Because I wanted to create something that could make their work a little lighter and patient care a little safer.  
+Because this project is the meeting point between my past in healthcare and my future in engineering.
 
-1. **Simplified Shock Index (sSI)**: 
-   - Formula: `Heart Rate / SpO2`. 
-   - Alert triggers if `sSI > 1.0` (indicates potential hemodynamic instability).
-2. **Infection Alert**: 
-   - Triggers if `Temp > 38.0°C` in conjunction with `BPM > 100` or desaturation.
-
----
-
-## 📡 Communication Protocol
-
-- **Wi-Fi**: Primary channel for gateway logging and cloud sync.
-- **ESP-NOW**: Binary-optimized, low-latency peer-to-peer fallback.
-- **Retries**: 3-stage ACK logic with a 500ms timeout per retry.
-
----
-
-## 🗺️ Roadmap
-
-- [x] **v0.1 - Local Prototype**: Basic Wi-Fi communication and ACK flow.
-- [x] **v0.2 - Clinical Intelligence**: Hardware-specific I2C mapping, sSI calculation, and binary protocol.
-- [ ] **v0.3 - Identity Management**: Captive portal for bedside configuration (Bed ID / Nurse MAC) and EEPROM storage.
-- [ ] **v1.0 - Cloud Integration**: AWS Lambda & DynamoDB for historical auditing and ward-wide dashboards.
-
----
-
-## ⚠️ Disclaimer
-
-This project is a technical and educational prototype inspired by clinical workflows. **It is not a certified medical device** and is not intended for life-critical monitoring or diagnostic use.
+CareLink is not just technology.  
+It is gratitude, experience, and hope — turned into a system.  
+And it will keep growing, just as I do.
