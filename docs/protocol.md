@@ -1,7 +1,8 @@
-# 📡 CareLink Mesh System — Communication Protocol v0.2
+# 📡 CareLink — Communication Protocol v0.2
 > **Binary-Optimized Protocol for Resilient Clinical Telemetry**
 
-This document defines the communication protocol for the CareLink Mesh System. Version 0.2 transitions from generic JSON strings to Packed C-Structures to minimize latency, reduce power consumption, and ensure reliability on constrained ESP8266/ESP32 hardware.
+This document defines the communication protocol for CareLink. 
+Version 0.2 transitions from generic JSON strings to Packed C-Structures to minimize latency, reduce power consumption, and ensure reliability on constrained ESP8266/ESP32 hardware.
 
 ---
 
@@ -68,4 +69,4 @@ Hardware behavior is dictated by the protocol state:
 ---
 
 ## ⚠️ Disclaimer
-CareLink Mesh System is a technical and educational prototype. It is not a certified medical device and should not be used for life-critical monitoring.
+CareLink is a technical and educational prototype. It is not a certified medical device and should not be used for life-critical monitoring.
