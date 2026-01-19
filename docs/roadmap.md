@@ -1,4 +1,4 @@
-# 🗺️ CareLink Mesh System — Roadmap v0.2
+# 🗺️ CareLink — Roadmap v0.2
 > **From bedside monitoring to a human‑centered clinical support ecosystem.**
 
 ---
@@ -76,5 +76,5 @@
 ---
 
 ## ⚠️ Disclaimer
-CareLink Mesh System is a technical and educational prototype inspired by real clinical workflows.  
+CareLink is a technical and educational prototype inspired by real clinical workflows.  
 It is **not** a certified medical device and must not be used for life‑critical monitoring.
