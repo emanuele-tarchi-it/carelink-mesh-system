@@ -1,4 +1,4 @@
-# 📡 CareLink Mesh System — Communication Protocol
+# 📡 CareLink — Communication Protocol
 > **Binary-Optimized Protocol for Resilient Clinical Telemetry & Device Pairing**
 
 This document defines the binary communication standards for the CareLink Mesh System. It covers both the **Telemetry Layer (v0.2)** for vital signs and the **Pairing Layer (v0.3)** for device association.

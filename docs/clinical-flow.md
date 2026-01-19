@@ -1,4 +1,4 @@
-# 🩺 CareLink Clinical Flow — v0.2
+# 🩺 CareLink Clinical Flow — v0.3
 ### *Human‑centered escalation model for safe and realistic ward workflows.*
 
 CareLink follows a clinical flow inspired by real hospital practice.  

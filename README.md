@@ -9,15 +9,14 @@
   ╚██████╗ ██║  ██║██║  ██║███████╗███████╗██║██║ ╚████║██║  ██╗
    ╚═════╝ ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝╚══════╝╚═╝╚═╝  ╚═══╝╚═╝  ╚═╝
 
-CARELINK • Connected Care Mesh  
-Patient • Nurse • Gateway • Cloud‑Ready System
+
 </pre>
 
 </div>
 
 ---
 
-# 🏥 CareLink Mesh System  
+# 🏥 CareLink  
 ### *Born in the ward. Built for the ward. A tribute to those who care.*
 
 ![Version](https://img.shields.io/badge/Version-0.3--EN-blue)
