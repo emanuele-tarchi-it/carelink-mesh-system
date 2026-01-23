@@ -1,10 +1,10 @@
-# 🩺 CareLink Clinical Flow — v0.3
+# 🩺 CareLink Clinical Flow — v0.4
 ### *Human‑centered escalation model for safe and realistic ward workflows.*
 
 CareLink follows a clinical flow inspired by real hospital practice.  
 The system never bypasses the nurse, who remains the primary decision‑maker for bedside monitoring and escalation.
 
-This document describes how alerts, trends, and decisions move through the CareLink ecosystem.
+This document describes how alerts, trends, and decisions move through the CareLink ecosystem in v0.4.
 
 ---
 
@@ -13,16 +13,16 @@ This document describes how alerts, trends, and decisions move through the CareL
 
 The Patient Node collects raw vitals and performs lightweight edge analysis:
 
-- Heart Rate (BPM)
-- SpO₂
-- Body Temperature
-- Simplified Shock Index (sSI)
-- Infection Alert logic
-- Basic trend deviation detection
+- Heart Rate (BPM)  
+- SpO₂  
+- Body Temperature  
+- Simplified Shock Index (sSI)  
+- Infection Alert logic  
+- Basic trend deviation detection  
 
-**Important:**  
+### Key Principle  
 The Patient Node does *not* escalate directly to physicians.  
-It only communicates with the Nurse Node.
+It communicates exclusively with the Nurse Node.
 
 ---
 
@@ -48,19 +48,18 @@ The nurse evaluates the alert based on:
 - acknowledge the alert  
 - silence or monitor the situation  
 - request additional checks  
-- **escalate to the Doctor Node** when appropriate  
+- **escalate to the Doctor Node (v0.5+)** when appropriate  
 
-### The nurse cannot be bypassed.
-No alert reaches the physician without nurse validation.
-
+### The nurse cannot be bypassed  
+No alert reaches the physician without nurse validation.  
 This preserves clinical hierarchy and avoids unnecessary cognitive load on doctors.
 
 ---
 
-# 3. 🩺 Doctor Node — Supervisory & Coordination Layer (v0.5+)
+# 3. 🩺 Doctor Node — Supervisory Layer (v0.5+)
 **Role:** Receives only validated alerts and nurse‑initiated requests.
 
-The Doctor Node is a fixed workstation designed for:
+The Doctor Node is planned for v0.5 and will support:
 
 - viewing validated alerts  
 - reviewing patient trends  
@@ -68,12 +67,12 @@ The Doctor Node is a fixed workstation designed for:
 - coordinating clinical actions  
 - requesting specialist support  
 
-### The Doctor Node receives:
+### The Doctor Node will receive:
 - nurse‑validated escalations  
-- trend deterioration confirmed by the nurse  
+- confirmed trend deterioration  
 - operational messages (e.g., “Therapy updated for Bed 3”)  
 
-### The Doctor Node does *not* receive:
+### The Doctor Node will *not* receive:
 - raw alerts  
 - unfiltered anomalies  
 - direct messages from Patient Nodes  
@@ -83,31 +82,28 @@ This ensures physicians focus only on clinically relevant events.
 ---
 
 # 4. 🧑‍⚕️ Specialist Nodes — Optional Future Expansion
-**Role:** Department‑level support (anesthesiology, resuscitation, respiratory therapy).
+**Role:** Department‑level support (anesthesiology, ICU, respiratory therapy).
 
 Triggered only by the Doctor Node or by explicit nurse request.
 
 Examples:
 
-- “Request anesthesiology support”
-- “Notify resuscitation team”
-- “Respiratory therapy consult needed”
+- “Request anesthesiology support”  
+- “Notify resuscitation team”  
+- “Respiratory therapy consult needed”  
 
 These nodes are optional and modular, allowing hospitals to customize CareLink to their workflow.
 
 ---
 
 # 5. 🔄 Escalation Flow Summary
-
 ```
-
-Patient Node  →  Nurse Node  →  Doctor Node  →  Specialist Nodes (optional)
+Patient Node  →  Nurse Node  →  Doctor Node (v0.5+)  →  Specialist Nodes (optional)
 |               |               |
 detection       validation       supervision
-
 ```
 
-### Key Principles:
+### Key Principles
 - **Nurse-first model:** No direct escalation to physicians.  
 - **Human-centered:** Technology supports, never replaces.  
 - **Context-aware:** Nurses interpret alerts based on real patient conditions.  
@@ -120,10 +116,10 @@ detection       validation       supervision
 
 CareLink is designed to respect real hospital dynamics:
 
-- Nurses are the backbone of bedside monitoring.  
-- Physicians must receive only meaningful, validated information.  
-- Specialists intervene only when necessary.  
-- Technology should reduce stress, not add noise.  
+- Nurses are the backbone of bedside monitoring  
+- Physicians must receive only meaningful, validated information  
+- Specialists intervene only when necessary  
+- Technology should reduce stress, not add noise  
 
 This flow ensures CareLink remains a **silent ally**, not a disruptive system.
 
@@ -134,7 +130,7 @@ This flow ensures CareLink remains a **silent ally**, not a disruptive system.
 ```mermaid
 flowchart LR
     P[Patient Node — Detection Layer] --> N[Nurse Node — Clinical Validation]
-    N -->|Escalation validated| D[Doctor Node — Supervision & Coordination]
+    N -->|Escalation validated| D[Doctor Node — Supervision & Coordination (v0.5+)]
     D -->|Specialist request| S[Specialist Nodes — Anesthesiology / ICU / RT]
 
     P ---|Raw vitals & alerts| N
@@ -145,6 +141,8 @@ flowchart LR
     classDef node fill:#f2f2f2,stroke:#555,stroke-width:1px,border-radius:6px;
 ```
 
-# ⚠️ Disclaimer
+
+## ⚠️ Disclaimer
+
 CareLink is a technical and educational prototype inspired by clinical workflows.  
-It is **not** a certified medical device and must not be used for life‑critical monitoring.
+It is **not** a certified medical device.
